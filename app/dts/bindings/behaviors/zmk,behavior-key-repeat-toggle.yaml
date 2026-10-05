@@ -1,0 +1,8 @@
+# Copyright (c) 2026 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+description: Enable or disable firmware key repeat
+
+compatible: "zmk,behavior-key-repeat-toggle"
+
+include: one_param.yaml

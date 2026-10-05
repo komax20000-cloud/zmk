@@ -1,0 +1,8 @@
+# Copyright (c) 2026 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+description: Pause firmware key repeat for five seconds
+
+compatible: "zmk,behavior-key-repeat-pause"
+
+include: zero_param.yaml

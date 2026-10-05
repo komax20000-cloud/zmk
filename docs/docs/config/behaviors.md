@@ -115,6 +115,41 @@ You can use the following nodes to tweak the default behaviors:
 | ------------- | ---------------------------------------- |
 | `&key_repeat` | [Key repeat](../behaviors/key-repeat.md) |
 
+## Held Key Repeat
+
+When `CONFIG_ZMK_KEY_REPEAT` is enabled, regular keyboard keys bound with `&kp` can repeat while held. Repeat is disabled by default and must be enabled with the toggle behavior. The initial key press is sent immediately, followed by repeats after an initial delay of 20 ms by default. The delay can be set to 10, 20, or 50 ms. The repeat interval starts at 30 ms and can be adjusted from 10 ms to 100 ms in 5 ms steps. Modifiers, lock keys, and non-keyboard HID usages are not auto-repeated.
+
+The `zmk,behavior-key-repeat-rate` behavior adjusts the interval: parameter `0` makes repetition faster and parameter `1` makes it slower. This behavior only affects firmware-generated repeats; it does not change the host operating system's key repeat settings.
+
+The `zmk,behavior-key-repeat-toggle` behavior enables repeat with parameter `1` and disables it with parameter `0`. On the Keychron K1 Ultra ANSI keymap, hold Fn and tap `↑` to enable repeat, `↓` to disable it, `←` to speed up, or `→` to slow down. Tap Fn+Z/X/C to set the initial delay to 10/20/50 ms. Fn+Enter pauses repeating for five seconds, then resumes it if repeat is still enabled. Pressing Fn+Enter again during the pause restarts the five-second countdown. While paused or disabled, currently held repeat keys are released to the host so its own key-repeat feature does not continue repeating them. The selected timings are held in memory and reset to defaults after reboot.
+
+The `zmk,behavior-key-repeat-delay` behavior sets the initial repeat delay in milliseconds. Supported parameters are `10`, `20`, and `50`.
+
+### Enable/Disable Behavior
+
+Definition file: [zmk/app/dts/bindings/behaviors/zmk,behavior-key-repeat-toggle.yaml](https://github.com/zmkfirmware/zmk/blob/main/app/dts/bindings/behaviors/zmk%2Cbehavior-key-repeat-toggle.yaml)
+
+Declare the behavior with `#binding-cells = <1>`, then bind `&repeat_toggle 1` to enable auto-repeat or `&repeat_toggle 0` to disable it. Disabling auto-repeat does not disable normal key presses.
+
+### Devicetree
+
+Definition file: [zmk/app/dts/bindings/behaviors/zmk,behavior-key-repeat-rate.yaml](https://github.com/zmkfirmware/zmk/blob/main/app/dts/bindings/behaviors/zmk%2Cbehavior-key-repeat-rate.yaml)
+
+Applies to: `compatible = "zmk,behavior-key-repeat-rate"`
+
+| Property         | Type | Description   | Default |
+| ---------------- | ---- | ------------- | ------- |
+| `#binding-cells` | int  | Must be `<1>` |         |
+
+Example:
+
+```dts
+repeat_rate: repeat_rate {
+    compatible = "zmk,behavior-key-repeat-rate";
+    #binding-cells = <1>;
+};
+```
+
 ## Macro
 
 Creates a custom behavior which triggers a sequence of other behaviors.

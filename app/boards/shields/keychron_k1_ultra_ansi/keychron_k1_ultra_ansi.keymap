@@ -12,9 +12,35 @@
 #include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/keychron.h>
 
+// [1] Enable with CONFIG_ZMK_KEY_REPEAT=y (already set in this shield's .conf).
+//     Repeat is off by default; Fn+Up enables it, Fn+Down disables it, and Fn+Enter pauses it for 5 seconds.
+//     Pressing Fn+Enter again during the pause restarts the 5-second countdown.
+//     Bind repeatable keys normally, e.g. &kp A or &kp BACKSPACE; they repeat while enabled.
+//     Fn+Z/X/C sets the first-repeat delay to 10/20/50 ms; default is 20 ms.
+//     Repeat interval defaults to 30 ms (10-100 ms, in 5 ms steps).
+//     &repeat_rate 0 decreases the interval (faster); &repeat_rate 1 increases it (slower).
+//     Fn+Left/Right adjusts the interval.
+//     Both timings reset to their defaults after reboot.
+//     Modifiers, lock keys, and non-keyboard HID usages do not repeat.
 
 / {
     behaviors {
+        repeat_rate: repeat_rate {
+            compatible = "zmk,behavior-key-repeat-rate";
+            #binding-cells = <1>;
+        };
+        repeat_toggle: repeat_toggle {
+            compatible = "zmk,behavior-key-repeat-toggle";
+            #binding-cells = <1>;
+        };
+        repeat_delay: repeat_delay {
+            compatible = "zmk,behavior-key-repeat-delay";
+            #binding-cells = <1>;
+        };
+        repeat_pause: repeat_pause {
+            compatible = "zmk,behavior-key-repeat-pause";
+            #binding-cells = <0>;
+        };
         rgb_encoder: rgb_encoder {
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
@@ -34,15 +60,6 @@
         bindings=<&kp 0x770000>;
     };
 
-    siri: siri {
-        compatible = "zmk,behavior-macro";
-        #binding-cells = <0>;
-        bindings
-        = <&macro_tap_time 500>
-        , <&uc LG(SPACE)>
-        ;
-    };
-    
     // mac_lock:mac_lock{
     //     compatible = "zmk,behavior-macro";
     //     #binding-cells = <0>;
@@ -157,70 +174,21 @@
         compatible = "zmk,combos";
         combo_a {
                 timeout-ms = <1000>;
-                layers =< 1 3>;
+                layers =< 0 1>;
                 key-positions = <58 65>; //fn+j+z
                 bindings = <&kc_lp RCV>;
         };
         // combo_b {v
         //         timeout-ms = <1000>;
-        //         layers =< 1 3>;
+        //         layers =< 0 1>;
         //         key-positions = <64>; //fn+b
         //         bindings = <&kc BATINFO>;
         // };
         // combo_c {
         //         timeout-ms = <1000>;
-        //         layers =< 1 3>;
+        //         layers =< 0 1>;
         //         key-positions = <58 81>; //fn+home+right
         //         bindings = <&kc_lp RGBTEST>;
-        // };
-         combo_t0 {
-            timeout-ms = <10 >;
-            layers =<4>;          
-            key-positions = <120>;  
-            bindings = <&to 3 >;
-        };
-        combo_t1 {
-            timeout-ms = <10 >;
-            layers =<4>;
-          
-            key-positions = <120>;  
-            bindings = <&tog 3 >;
-        };
-        combo_t2 {
-            timeout-ms = <10 >;
-            layers =<4>;          
-            key-positions = <120>;  
-            bindings = <&sl 3 >;
-        };
-        combo_t3 {
-            timeout-ms = <10 >;
-            layers =<4>;          
-            key-positions = <120>;  
-            bindings = <&lt 3 SPACE>;
-        };
-        combo_t4 {
-            timeout-ms = <10 >;
-            layers =<4>;          
-            key-positions = <120>;  
-            bindings = <&sk LSHIFT>;
-        };
-        combo_t5 {
-            timeout-ms = <10 >;
-            layers =<4>;          
-            key-positions = <120>;  
-            bindings = <&mt LSHIFT SPACE>;
-        };
-        combo_t6 {
-            timeout-ms = <10 >;
-            layers =<4>;          
-            key-positions = <120>;  
-            bindings = <&gresc>;
-        };
-        //  combo_t7 {
-        //     timeout-ms = <10 >;
-        //     layers =<4>;          
-        //     key-positions = <120>;  
-        //     bindings = <&mkp 0>;
         // };
         // combo_win_l {
         //     timeout-ms = <500>;
@@ -241,16 +209,7 @@
         tapping-term-ms = <3000>;   
         bindings = <&fn_win_l>, <&fn_win_s>;
     };
-    ZMK_MACRO(fn_mac, bindings = <&kc MO_MAC_LAYER>;)
     ZMK_MACRO(fn_win, bindings = <&kc MO_WIN_LAYER>;)
-    lp_mo_mac:lp_mo_mac{
-        compatible = "zmk,behavior-hold-tap";
-
-        #binding-cells = <2>;
-        flavor = "tap-preferred";
-        tapping-term-ms = <3000>;   
-        bindings = <&fn_mac>,<&trans>;
-    };
     lp_mo_win:lp_mo_win{
         compatible = "zmk,behavior-hold-tap";
 
@@ -261,59 +220,30 @@
     };
     keymap {
         compatible = "zmk,keymap";       
-        //mac
-        layer_one {
-            bindings = <
-            &kp ESC     &kp C_BRIGHTNESS_DEC   &kp C_BRIGHTNESS_INC     &kp C_AC_DESKTOP_SHOW_ALL_WINDOWS   &kp  C_AC_MAC_LAUNCH    &rgb_ug RGB_BRD     &rgb_ug RGB_BRI &kp C_PREVIOUS  &kp C_PLAY_PAUSE    &kp C_NEXT  &kp C_MUTE  &kp C_VOLUME_DOWN    &kp C_VOLUME_UP     &kp C_MUTE            &uc LG(LS(N4))        &siri            &rgb_ug RGB_EFF                  
-            &kp GRAVE   &kp N1                 &kp N2                   &kp N3                              &kp N4                  &kp N5              &kp N6          &kp N7          &kp N8              &kp N9       &kp N0     &kp MINUS            &kp EQUAL           &kp BSPC              &kp INSERT            &kp HOME         &kp PGUP                
-            &kp TAB     &kp Q                  &kp W                    &kp E                               &kp R                   &kp T               &kp Y           &kp U           &kp I               &kp O        &kp P      &kp LBKT             &kp RBKT            &kp BSLH              &kp DEL               &kp END          &kp PGDN                
-            &kp CLCK    &kp A                  &kp S                    &kp D                               &kp F                   &kp G               &kp H           &kp J           &kp K               &kp L        &kp SEMI   &kp SQT                                  &kp RET                                                                     
-            &kp LSHFT                          &kp Z                    &kp X                               &kp C                   &kp V               &kp B           &kp N           &kp M               &kp COMMA    &kp DOT    &kp FSLH                                 &kp RSHFT                                   &kp UP                     
-            &kp LCTRL   &uc LALT               &uc LCMD                                                                                                 &kp SPACE                                                        &uc RCMD   &uc RALT            &mo 1               &kp RCTRL             &kp LEFT              &kp DOWN          &kp RIGHT                         
-            //keychron control
-            &mo 2       &kc SEL_PPT  &kc SEL_BLE      &kc SEL_USB   &kc  BATCHG
-            >;
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
-        };
-        //mac fn layer
-        layer_two {
-            bindings = < 
-                                            //f1                        //f2                        //f3                                //f4                        //f5            //f6                //f7            //f8                //f9        //f10           //f11                         //f12                     
-            &trans                          &kp F1                      &kp F2                      &kp F3                              &kp F4                  &kp F5              &kp F6              &kp F7          &kp F8              &kp F9      &kp F10     &kp F11                     &kp F12              &rgb_ug RGB_TOG      &trans                &trans    &rgb_ug RGB_TOG                                         
-            &trans                          &bt_pair_0 0 0              &bt_pair_1 0 0              &bt_pair_2 0 0                      &ppt_pair_0 0 0         &trans              &trans              &trans          &trans              &trans      &trans      &trans                      &trans               &trans               &trans                &trans    &trans 
-            &rgb_ug RGB_TOG                 &rgb_ug RGB_EFF             &rgb_ug RGB_BRI             &rgb_ug RGB_HUI                     &rgb_ug RGB_SAI         &rgb_ug RGB_SPI     &trans              &trans          &trans              &trans      &trans      &trans                      &trans               &trans               &trans                &trans    &trans  
-            &trans                          &rgb_ug RGB_EFR             &rgb_ug RGB_BRD             &rgb_ug RGB_HUD                     &rgb_ug RGB_SAD         &rgb_ug RGB_SPD     &trans              &trans          &trans              &trans      &trans      &trans                                           &trans                                                                  
-            &trans                                                      &trans                      &trans                              &trans                  &trans              &kc BATINFO         &trans          &trans              &trans      &trans      &trans                                           &trans                                     &trans                 
-            &trans                          &trans                      &trans                                                                                                       &trans                                                              &trans      &trans                      &trans               &trans               &trans                &trans    &trans                                         
-            //
-            &none                           &trans     &trans                      &trans                      &trans                                               
-            >;
-            sensor-bindings = <&rgb_encoder>;
-        };
-        //win
-        layer_three {
+        // Windows
+        layer_zero {
         bindings = <
         &kp ESC     &kp F1                 &kp F2                   &kp F3                              &kp F4                  &kp F5              &kp F6          &kp F7          &kp F8              &kp F9       &kp F10    &kp F11              &kp F12             &kp C_MUTE            &kp PSCRN             &uc LG(H)        &rgb_ug RGB_EFF                  
         &kp GRAVE   &kp N1                 &kp N2                   &kp N3                              &kp N4                  &kp N5              &kp N6          &kp N7          &kp N8              &kp N9       &kp N0     &kp MINUS            &kp EQUAL           &kp BSPC              &kp INSERT            &kp HOME         &kp PGUP                
         &kp TAB     &kp Q                  &kp W                    &kp E                               &kp R                   &kp T               &kp Y           &kp U           &kp I               &kp O        &kp P      &kp LBKT             &kp RBKT            &kp BSLH              &kp DEL               &kp END          &kp PGDN                
         &kp CLCK    &kp A                  &kp S                    &kp D                               &kp F                   &kp G               &kp H           &kp J           &kp K               &kp L        &kp SEMI   &kp SQT                                  &kp RET                                                                     
         &kp LSHFT                          &kp Z                    &kp X                               &kp C                   &kp V               &kp B           &kp N           &kp M               &kp COMMA    &kp DOT    &kp FSLH                                 &kp RSHFT                                   &kp UP                     
-        &kp LCTRL   &kp LGUI               &kp LALT                                                                                                 &kp SPACE                                                        &kp RALT   &kp RGUI             &mo 3               &kp RCTRL             &kp LEFT              &kp DOWN          &kp RIGHT                         
+        &kp LCTRL   &kp LGUI               &kp LALT                                                                                                 &kp SPACE                                                        &kp RALT   &kp RGUI             &mo 1               &kp RCTRL             &kp LEFT              &kp DOWN          &kp RIGHT
         //keychron control
         &none   &kc SEL_PPT   &kc SEL_BLE       &kc SEL_USB   &kc  BATCHG
         >;
         sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
         };
-        //win fn layer
-        layer_four {
+        // Windows Fn layer
+        layer_one {
         bindings = < 
                                         //f1                        //f2                        //f3                                //f4                        //f5            //f6                //f7            //f8                //f9        //f10           //f11                         //f12                     
         &trans                          &kp C_BRIGHTNESS_DEC        &kp C_BRIGHTNESS_INC        &uc LG(TAB)                         &uc LG(E)               &rgb_ug RGB_BRD     &rgb_ug RGB_BRI     &kp C_PREVIOUS  &kp C_PLAY_PAUSE    &kp C_NEXT  &kp C_MUTE  &kp C_VOLUME_DOWN           &kp C_VOLUME_UP      &rgb_ug RGB_TOG      &trans                &trans    &rgb_ug RGB_TOG                              
         &trans                          &bt_pair_0 0 0              &bt_pair_1 0 0              &bt_pair_2 0 0                      &ppt_pair_0 0 0         &trans              &trans              &trans          &trans              &trans      &trans      &trans                      &trans               &trans               &trans                &trans    &trans 
         &rgb_ug RGB_TOG                 &rgb_ug RGB_EFF             &rgb_ug RGB_BRI             &rgb_ug RGB_HUI                     &rgb_ug RGB_SAI         &rgb_ug RGB_SPI     &trans              &trans          &trans              &trans      &trans      &trans                      &trans               &trans               &trans                &trans    &trans  
-        &trans                          &rgb_ug RGB_EFR             &rgb_ug RGB_BRD             &rgb_ug RGB_HUD                     &rgb_ug RGB_SAD         &rgb_ug RGB_SPD     &trans              &trans          &trans              &trans      &trans      &trans                                           &trans                                                                  
-        &trans                                                      &trans                      &trans                              &trans                  &trans              &kc BATINFO         &trans          &trans              &trans      &trans      &trans                                           &trans                                     &trans                 
-        &trans                          &trans                      &trans                                                                                                       &trans                                                              &trans      &trans                      &trans               &trans               &trans                &trans    &trans                                         
+        &trans                          &rgb_ug RGB_EFR             &rgb_ug RGB_BRD             &rgb_ug RGB_HUD                     &rgb_ug RGB_SAD         &rgb_ug RGB_SPD     &trans              &trans          &trans              &trans      &trans      &trans                                           &repeat_pause
+        &trans                          &repeat_delay 10            &repeat_delay 20                &repeat_delay 50    &trans              &kc BATINFO         &trans          &trans              &trans      &trans      &trans                                           &trans                                     &repeat_toggle 1
+        &trans                          &trans                      &trans                          &trans              &trans              &trans              &trans              &trans              &repeat_rate 0         &repeat_toggle 0    &repeat_rate 1
         //
         &none                         &trans   &trans                      &trans                      &trans                                               
         >;

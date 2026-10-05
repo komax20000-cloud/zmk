@@ -1,0 +1,8 @@
+# Copyright (c) 2026 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+description: Adjust the firmware key-repeat interval
+
+compatible: "zmk,behavior-key-repeat-rate"
+
+include: one_param.yaml
